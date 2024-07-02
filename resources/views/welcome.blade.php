@@ -282,7 +282,7 @@
 
 <body class="antialiased">
     <div id="chatbot-button-container">
-        <span>Chat with your Virtual Assistant</span>
+        <span>Chat with our Virtual Assistant</span>
         <button id="chatbot-button">
             <img src="{{asset('logo-1.png')}}" style="object-fit: contain;">
         </button>
