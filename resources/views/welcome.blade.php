@@ -311,19 +311,12 @@
     document.getElementById('chatbot-button').addEventListener('click', function() {
         var chatbotContainer = document.getElementById('rag-chatbot-container');
         chatbotContainer.style.display = chatbotContainer.style.display === 'none' ? 'block' : 'none';
+        var message = {
+        type: 'toggleChatbot',
+        display: chatbotContainer.style.display
+    };
+    window.parent.postMessage(message, 'https://www.inovient.io'); // Replace with the actual domain of the parent
     });
-    window.addEventListener('message', function(event) {
-        if (event.data.type === 'toggleChatbot') {
-            var chatbotContainer = document.getElementById('rag-chatbot-container');
-            if (chatbotContainer.style.display === 'none') {
-            chatbotContainer.style.display = 'block';
-            window.parent.postMessage({ type: 'adjustZIndex', zIndex: '2' }, '*');
-            } else {
-            chatbotContainer.style.display = 'none';
-            window.parent.postMessage({ type: 'adjustZIndex', zIndex: '1' }, '*');
-            }
-        }
-        });
     document.getElementById('close-chatbot').addEventListener('click', function() {
         var chatbotContainer = document.getElementById('rag-chatbot-container');
         chatbotContainer.style.display = 'none';
