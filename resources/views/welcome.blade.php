@@ -241,6 +241,51 @@
     #chatbot-button:hover img {
         transform: rotate(360deg);
     }
+   
+    .loading span {
+    opacity: 0;
+    display: inline-block;
+    font-size: 44px !important;
+    /* color: black; */
+    margin: 0 2px; /* Spacing between dots */
+    animation: typing 1s infinite;
+    background-color: #969393; /* Light gray background */
+    border-radius: 50%; /* Makes the dots circular */
+    width: 10px; /* Set the width of the dots */
+    height: 10px; /* Set the height of the dots */
+    vertical-align: middle; /* Aligns dots properly with the text, if any */
+    }
+    @keyframes typing 
+    {
+        0%, 100% 
+        {
+            opacity: 0;
+        }
+        33% 
+        {
+            opacity: 1;
+        }
+        66%
+        {
+        opacity: 0;
+        }
+    }
+
+    .loading span:nth-child(1) 
+    {
+        animation-delay: 0s;
+    }
+
+    .loading span:nth-child(2) 
+    {
+        animation-delay: 0.33s;
+    }
+
+    .loading span:nth-child(3) 
+    {
+        animation-delay: 0.66s;
+    }   
+
     @media (max-width: 600px) {
             #rag-chatbot-container {
                 max-width: 90% !important; /* Smaller screens will use more of the screen for the chatbot */
@@ -343,78 +388,78 @@
     });
 
     function submitMessage() {
-        var inputField = document.getElementById('rag-chatbot-input');
-        var userMessage = inputField.value;
-        if (userMessage) {
-            var messageContainer = document.getElementById('rag-chatbot-messages');
+    var inputField = document.getElementById('rag-chatbot-input');
+    var userMessage = inputField.value;
+    if (userMessage) {
+        var messageContainer = document.getElementById('rag-chatbot-messages');
 
-            var userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'chatbot-message user';
-            userMessageDiv.textContent = userMessage;
-            messageContainer.appendChild(userMessageDiv);
+        var userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'chatbot-message user';
+        userMessageDiv.textContent = userMessage;
+        messageContainer.appendChild(userMessageDiv);
 
-            inputField.value = '';
+        inputField.value = '';
 
-            // Scroll to the bottom of the messages
-            messageContainer.scrollTop = messageContainer.scrollHeight;
+        // Scroll to the bottom of the messages
+        messageContainer.scrollTop = messageContainer.scrollHeight;
 
-            // Display loading message
-            var loadingDiv = document.createElement('div');
-            loadingDiv.className = 'chatbot-message bot loading';
-            loadingDiv.textContent = '...';
-            messageContainer.appendChild(loadingDiv);
+        // Display loading message
+        var loadingDiv = document.createElement('div');
+        loadingDiv.className = 'chatbot-message bot loading';
+        loadingDiv.innerHTML = '<span>.</span><span>.</span><span>.</span>'; // Three dots with CSS animation
+        messageContainer.appendChild(loadingDiv);
 
-            // Handle the chatbot response
-            $.ajax({
-                url: "{{ route('chatbot.ask') }}",
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    question: userMessage
-                },
-                success: function(response) {
-                    messageContainer.removeChild(loadingDiv);
-                    var botMessageDiv = document.createElement('div');
-                    botMessageDiv.className = 'chatbot-message bot';
+        // Handle the chatbot response
+        $.ajax({
+            url: "{{ route('chatbot.ask') }}",
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                question: userMessage
+            },
+            success: function(response) {
+                messageContainer.removeChild(loadingDiv);
+                var botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'chatbot-message bot';
 
-                    var chatIconDiv = document.createElement('div');
-                    chatIconDiv.className = 'chat-icon';
+                var chatIconDiv = document.createElement('div');
+                chatIconDiv.className = 'chat-icon';
 
-                    var chatBubbleDiv = document.createElement('div');
-                    chatBubbleDiv.className = 'chat-bubble';
-                    chatBubbleDiv.textContent = response.answer;
+                var chatBubbleDiv = document.createElement('div');
+                chatBubbleDiv.className = 'chat-bubble';
+                chatBubbleDiv.textContent = response.answer;
 
-                    botMessageDiv.appendChild(chatIconDiv);
-                    botMessageDiv.appendChild(chatBubbleDiv);
+                botMessageDiv.appendChild(chatIconDiv);
+                botMessageDiv.appendChild(chatBubbleDiv);
 
-                    messageContainer.appendChild(botMessageDiv);
+                messageContainer.appendChild(botMessageDiv);
 
-                    // Scroll to the bottom of the messages
-                    messageContainer.scrollTop = messageContainer.scrollHeight;
-                },
-                error: function(xhr, status, error) {
-                    messageContainer.removeChild(loadingDiv);
-                    var botMessageDiv = document.createElement('div');
-                    botMessageDiv.className = 'chatbot-message bot';
+                // Scroll to the bottom of the messages
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            },
+            error: function(xhr, status, error) {
+                messageContainer.removeChild(loadingDiv);
+                var botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'chatbot-message bot';
 
-                    var chatIconDiv = document.createElement('div');
-                    chatIconDiv.className = 'chat-icon';
+                var chatIconDiv = document.createElement('div');
+                chatIconDiv.className = 'chat-icon';
 
-                    var chatBubbleDiv = document.createElement('div');
-                    chatBubbleDiv.className = 'chat-bubble';
-                    chatBubbleDiv.textContent = 'An error occurred: ' + xhr.responseText;
+                var chatBubbleDiv = document.createElement('div');
+                chatBubbleDiv.className = 'chat-bubble';
+                chatBubbleDiv.textContent = 'An error occurred: ' + xhr.responseText;
 
-                    botMessageDiv.appendChild(chatIconDiv);
-                    botMessageDiv.appendChild(chatBubbleDiv);
+                botMessageDiv.appendChild(chatIconDiv);
+                botMessageDiv.appendChild(chatBubbleDiv);
 
-                    messageContainer.appendChild(botMessageDiv);
+                messageContainer.appendChild(botMessageDiv);
 
-                    // Scroll to the bottom of the messages
-                    messageContainer.scrollTop = messageContainer.scrollHeight;
-                }
-            });
-        }
+                // Scroll to the bottom of the messages
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        });
     }
+}
 
     function resetChat() {
         var messageContainer = document.getElementById('rag-chatbot-messages');
